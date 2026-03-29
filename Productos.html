@@ -1,0 +1,442 @@
+<!doctype html>
+<html lang="es" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tienda Rosa Cocoa - Productos de Repostería</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&amp;family=Poppins:wght@300;400;500;600;700&amp;display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="cart.css">
+  <style>
+    body {
+      box-sizing: border-box;
+    }
+
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .font-display {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .product-card {
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-card:hover {
+      transform: translateY(-12px);
+      box-shadow: 0 25px 50px rgba(248, 180, 196, 0.25);
+    }
+
+    .btn-add {
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn-add:active {
+      transform: scale(0.95);
+    }
+
+    .btn-add:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .cart-item {
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-20px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .cart-sidebar {
+      transition: transform 0.3s ease-in-out;
+      position: fixed;
+      right: 0;
+      top: 0;
+      height: 100%;
+      width: 100%;
+      max-width: 450px;
+      z-index: 40;
+      background: white;
+      box-shadow: -10px 0 40px rgba(0, 0, 0, 0.1);
+    }
+
+    .cart-sidebar.hidden {
+      transform: translateX(100%);
+    }
+
+    .cart-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 30;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .cart-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .quantity-input {
+      width: 60px;
+      text-align: center;
+      border: 2px solid #D4B8E0;
+      border-radius: 8px;
+      padding: 6px;
+      font-weight: 600;
+      color: #5D4E60;
+    }
+
+    .quantity-input:focus {
+      outline: none;
+      border-color: #F8B4C4;
+      box-shadow: 0 0 0 3px rgba(248, 180, 196, 0.1);
+    }
+
+    .badge-count {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #F8B4C4;
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .loading-spinner {
+      border: 3px solid #F8B4C4;
+      border-top-color: #D4B8E0;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .fade-in {
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+
+      to {
+        opacity: 1;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .cart-sidebar {
+        max-width: 100%;
+      }
+    }
+  </style>
+  <style>
+    @view-transition {
+      navigation: auto;
+    }
+  </style>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full bg-[#FFF8F0] overflow-auto">
+  <div class="w-full min-h-full flex flex-col"><!-- Header -->
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-[#F8B4C4] to-[#D4B8E0] text-white py-6 px-4 shadow-lg sticky top-0 z-20">
+      <div class="max-w-7xl mx-auto flex items-center justify-between"><!-- BOTÓN DE REGRESO --> <a href="index.html#"
+          class="group relative inline-flex items-center gap-2 hover:opacity-90 transition-all">
+          <div class="p-2 bg-white/20 rounded-lg group-hover:bg-white/30 transition-colors">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+          </div>
+        </a> <!-- FIN BOTÓN DE REGRESO -->
+        <div class="flex items-center gap-3">
+          <img src="Imgpag/rosa.svg" alt="Rosa Cocoa Studio Creativo"
+                            class="w-10 h-10 md:w-16 md:h-16 object-contain" />
+          <div>
+            <h1 id="store-title" class="font-display text-2xl font-bold">Tienda Rosa Cocoa</h1>
+            <p class="text-xs opacity-90">Insumos de repostería premium</p>
+          </div>
+        </div><!-- Cart Button --> <button id="cartBtn"
+          class="relative bg-white text-[#F8B4C4] px-6 py-2 rounded-full font-bold flex items-center gap-2 hover:bg-opacity-90 transition-all shadow-md">
+          <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            <path
+              d="M3 3a1 1 0 000 2h1.22l.78 3.12 1.64 6.53A2 2 0 008.58 16H17a2 2 0 001.94-1.53l1.25-5A1 1 0 0019.22 8H6.28L5.9 6.47A2 2 0 004 5H3zm5 15a2 2 0 100 4 2 2 0 000-4zm9 2a2 2 0 11-4 0 2 2 0 014 0z" />
+          </svg><span id="cartCount" class="font-bold">0</span> <span id="cartBadge" class="badge-count hidden">0</span>
+        </button>
+      </div>
+    </header><!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-12">
+      <div class="mb-12 fade-in">
+        <h2 id="page-title" class="font-display text-4xl md:text-5xl font-bold text-[#5D4E60] mb-3">Catálogo de
+          Productos</h2>
+        <p class="text-[#5D4E60]/70 text-lg">Encuentra los mejores insumos para tu pastelería creativa</p>
+      </div><!-- Products Grid -->
+      <div id="productsContainer" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <!-- Products will be inserted here -->
+      </div>
+    </main>
+    
+    <!-- Cart Overlay -->
+    <div id="cartOverlay" class="cart-overlay"></div><!-- Cart Sidebar -->
+    <div id="cartSidebar" class="cart-sidebar hidden"><!-- Cart Close Button --> <button id="closeCartBtn"
+        class="absolute top-4 right-4 text-[#5D4E60] hover:bg-[#F8B4C4]/20 p-2 rounded-lg z-50">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        </svg></button> 
+        
+        <!-- Cart Header -->
+      <div class="bg-gradient-to-r from-[#F8B4C4] to-[#D4B8E0] text-white p-6 pt-12">
+        <h2 class="font-display text-2xl font-bold">🛒 Tu Carrito</h2>
+      </div><!-- Cart Items -->
+      <div id="cartItems" class="flex-1 overflow-y-auto p-6" style="max-height: calc(100vh - 350px)">
+        <div class="text-center text-[#5D4E60]/60 py-12">
+          <svg class="w-16 h-16 mx-auto mb-4 opacity-50" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+          </svg>
+          <p>Tu carrito está vacío</p>
+        </div>
+      </div><!-- Cart Summary -->
+      <div class="border-t-2 border-[#D4B8E0]/30 p-6 space-y-4"><!-- Payment Method -->
+        <div><label class="block text-sm font-bold text-[#5D4E60] mb-2">Método de pago:</label> <select
+            id="paymentMethod"
+            class="w-full border-2 border-[#D4B8E0] rounded-lg px-4 py-2 text-[#5D4E60] font-medium focus:outline-none focus:border-[#F8B4C4]">
+            <option value="">Selecciona un método</option>
+            <option value="Transferencia bancaria">💳 Transferencia bancaria</option>
+            <option value="Efectivo">💵 Efectivo</option>
+            <option value="Tarjeta de crédito">💰 Tarjeta de crédito</option>
+          </select>
+        </div><!-- Totals -->
+        <div class="space-y-2 pt-4 border-t-2 border-[#D4B8E0]/30">
+          <div class="flex justify-between text-[#5D4E60]"><span>Subtotal:</span> <span class="font-bold">$<span
+                id="subtotal">0.00</span></span>
+          </div>
+          <div class="flex justify-between text-lg font-bold text-[#F8B4C4]"><span>Total:</span> <span>$<span
+                id="cartTotal">0.00</span></span>
+          </div>
+        </div><!-- WhatsApp Button --> <button id="whatsappBtn"
+          class="w-full bg-[#25D366] hover:bg-[#20BA5A] text-white font-bold py-3 px-4 rounded-lg transition-colors mt-4 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24">
+            <path
+              d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+          </svg><span id="whatsappBtnText">Enviar pedido</span> </button>
+      </div>
+    </div>
+  </div>
+  <script src="cart.js"></script>
+  
+  <script>
+    // Product data with beautiful images from Unsplash
+    const productsData = [
+      {
+        id: 'p1',
+        name: 'Colorantes en Gel - Set Premium 12 colores',
+        price: 349.00,
+        image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80',
+        description: 'Set completo de colorantes alimentarios en gel'
+      },
+      {
+        id: 'p2',
+        name: 'Moldes para Cupcakes - Kit 24 piezas',
+        price: 159.00,
+        image: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=500&q=80',
+        description: 'Moldes profesionales reutilizables'
+      },
+      {
+        id: 'p3',
+        name: 'Fondant Premium - 1kg Blanco',
+        price: 299.00,
+        image: 'https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=500&q=80',
+        description: 'Fondant de alta calidad para decoración'
+      },
+      {
+        id: 'p4',
+        name: 'Boquillas de Repostería - Set 50 piezas',
+        price: 189.00,
+        image: 'https://images.unsplash.com/photo-1535920527894-b86f9e9cdd46?w=500&q=80',
+        description: 'Acero inoxidable profesional'
+      },
+      {
+        id: 'p5',
+        name: 'Masa Madre Levadura - 500g',
+        price: 79.00,
+        image: 'https://images.unsplash.com/photo-1586559217946-77bde3e26999?w=500&q=80',
+        description: 'Levadura deshidratada premium'
+      },
+      {
+        id: 'p6',
+        name: 'Espátulas de Silicona - Set 5 colores',
+        price: 129.00,
+        image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=500&q=80',
+        description: 'Resistentes al calor hasta 260°C'
+      },
+      {
+        id: 'p7',
+        name: 'Harina de Pastelería - 1kg',
+        price: 45.00,
+        image: 'https://images.unsplash.com/photo-1599599810694-b3ee7dab73b4?w=500&q=80',
+        description: 'Harina refinada para pasteles esponjosos'
+      },
+      {
+        id: 'p8',
+        name: 'Azúcar Glass - 500g',
+        price: 39.00,
+        image: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=500&q=80',
+        description: 'Azúcar impalpable para coberturas'
+      },
+      {
+        id: 'p9',
+        name: 'Mantequilla Clarificada - 250ml',
+        price: 89.00,
+        image: 'https://images.unsplash.com/photo-1536675335885-f38d28f8c4d3?w=500&q=80',
+        description: 'Mantequilla pura de calidad gourmet'
+      }
+    ];
+
+    const defaultConfig = {
+      store_title: 'Tienda Rosa Cocoa',
+      whatsapp_number: '+52 55 1234 5678',
+      payment_methods: 'Transferencia, Efectivo, Tarjeta'
+    };
+
+    let config = { ...defaultConfig };
+
+    function initializeApp() {
+      if (window.rosaCart) {
+        window.rosaCart.init({
+          whatsapp_number: config.whatsapp_number || defaultConfig.whatsapp_number
+        });
+      }
+      renderProducts();
+    }
+
+    function renderProducts() {
+      const container = document.getElementById('productsContainer');
+      container.innerHTML = '';
+
+      productsData.forEach(product => {
+        const productEl = document.createElement('div');
+        productEl.className = 'product-card bg-white rounded-2xl overflow-hidden shadow-lg';
+        productEl.innerHTML = `
+          <img 
+            src="${product.image}" 
+            alt="${product.name}" 
+            loading="lazy"
+            class="w-full h-64 object-cover bg-gradient-to-br from-[#F8B4C4] to-[#D4B8E0]"
+            onerror="this.style.background='linear-gradient(135deg, #F8B4C4, #D4B8E0)'; this.style.height='256px';"
+          >
+          <div class="p-5 flex flex-col flex-1">
+            <h3 class="font-bold text-lg text-[#5D4E60] mb-2 line-clamp-2">${product.name}</h3>
+            <p class="text-sm text-[#5D4E60]/70 mb-4 flex-1">${product.description}</p>
+            <div class="flex items-center justify-between mb-4 pt-2 border-t border-[#D4B8E0]/30">
+              <span class="text-3xl font-bold text-[#F8B4C4]">$${product.price.toFixed(2)}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <button class="btn-add flex-1 bg-gradient-to-r from-[#F8B4C4] to-[#E8A4B4] hover:from-[#E8A4B4] hover:to-[#D894A4] text-white font-bold py-3 px-4 rounded-lg transition-all shadow-md" data-product-id="${product.id}">
+                ???? Agregar al carrito
+              </button>
+              <a href="verproductos.html?id=${encodeURIComponent(product.id)}" class="bg-[#D4B8E0] hover:bg-[#C4A8D0] text-white font-bold py-3 px-4 rounded-lg transition-all shadow-md whitespace-nowrap">
+                Ver
+              </a>
+            </div>
+          </div>
+        `;
+
+        const addBtn = productEl.querySelector('[data-product-id]');
+        addBtn.addEventListener('click', () => addToCart(product));
+
+        container.appendChild(productEl);
+      });
+    }
+
+    function addToCart(product) {
+      if (window.rosaCart) {
+        window.rosaCart.addItem(product);
+      }
+    }
+
+    async function onConfigChange(newConfig) {
+      config = { ...defaultConfig, ...newConfig };
+      document.getElementById('store-title').textContent = config.store_title || defaultConfig.store_title;
+      document.getElementById('page-title').textContent = 'Cat??logo de Productos';
+      if (window.rosaCart) {
+        window.rosaCart.setConfig({
+          whatsapp_number: config.whatsapp_number || defaultConfig.whatsapp_number
+        });
+      }
+    }
+
+    function mapToCapabilities() {
+      return {
+        recolorables: [],
+        borderables: [],
+        fontEditable: undefined,
+        fontSizeable: undefined
+      };
+    }
+
+    function mapToEditPanelValues() {
+      return new Map([
+        ['store_title', config.store_title || defaultConfig.store_title],
+        ['whatsapp_number', config.whatsapp_number || defaultConfig.whatsapp_number],
+        ['payment_methods', config.payment_methods || defaultConfig.payment_methods]
+      ]);
+    }
+
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: { ...config },
+        onConfigChange,
+        mapToCapabilities,
+        mapToEditPanelValues
+      });
+    }
+
+    initializeApp();
+  </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9c870b92b18c9619',t:'MTc3MDE3NTM2My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

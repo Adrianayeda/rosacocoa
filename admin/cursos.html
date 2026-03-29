@@ -1,0 +1,473 @@
+<!doctype html>
+<html lang="es" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agregar Curso - Rosa Cocoa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    .font-display { font-family: 'Cormorant Garamond', serif; }
+    .form-container {
+      background: linear-gradient(135deg, rgba(248, 180, 196, 0.1) 0%, rgba(212, 184, 224, 0.1) 100%);
+      border: 2px solid rgba(248, 180, 196, 0.2);
+    }
+    .input-field { transition: all 0.3s ease; border: 2px solid #D4B8E0; }
+    .input-field:focus {
+      outline: none;
+      border-color: #F8B4C4;
+      box-shadow: 0 0 0 3px rgba(248, 180, 196, 0.1);
+    }
+    .btn-submit { background: linear-gradient(135deg, #F8B4C4 0%, #E8A4B4 100%); transition: all 0.3s ease; }
+    .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(248, 180, 196, 0.3); }
+    .btn-cancel { background: #D4B8E0; transition: all 0.3s ease; }
+    .btn-cancel:hover { background: #C4A8D0; transform: translateY(-2px); }
+    .success-message, .error-message {
+      color: white;
+      padding: 1rem;
+      border-radius: 0.75rem;
+      display: none;
+    }
+    .success-message { background: #22c55e; }
+    .error-message { background: #ef4444; }
+    .success-message.show, .error-message.show { display: block; }
+    .required-asterisk { color: #F8B4C4; font-weight: bold; }
+    .course-card { background: white; border: 1px solid #f3d9e0; border-radius: 1rem; overflow: hidden; }
+  </style>
+</head>
+<body class="h-full bg-[#FFF8F0] overflow-auto">
+  <div class="w-full min-h-full">
+    <header class="bg-white shadow-md sticky top-0 z-40">
+      <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
+        <button onclick="goBackToMenu()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F8B4C4] hover:bg-[#E8A4B4] text-white font-medium transition-all hover:scale-105">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Volver
+        </button>
+        <h1 class="font-display text-2xl font-bold text-[#5D4E60]">Agregar Curso</h1>
+        <div class="w-24"></div>
+      </div>
+    </header>
+
+    <main class="py-8 md:py-12 px-4">
+      <div class="max-w-4xl mx-auto">
+        <div id="successMessage" class="success-message mb-6">
+          <span id="successText">Curso agregado exitosamente.</span>
+        </div>
+        <div id="errorMessage" class="error-message mb-6">
+          <span id="errorText">Error al agregar el curso.</span>
+        </div>
+
+        <form id="courseForm" class="form-container rounded-3xl p-8 md:p-10 shadow-xl" enctype="multipart/form-data">
+          <h2 class="font-display text-2xl md:text-3xl font-bold text-[#5D4E60] mb-8">Informacion del Curso</h2>
+
+          <div class="mb-6">
+            <label for="courseName" class="block text-sm font-bold text-[#5D4E60] mb-2">Nombre del Curso <span class="required-asterisk">*</span></label>
+            <input type="text" id="courseName" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60]" required>
+          </div>
+
+          <div class="mb-6">
+            <label for="courseDescription" class="block text-sm font-bold text-[#5D4E60] mb-2">Descripcion <span class="required-asterisk">*</span></label>
+            <textarea id="courseDescription" rows="4" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60]" required></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label for="startDate" class="block text-sm font-bold text-[#5D4E60] mb-2">Fecha de Inicio <span class="required-asterisk">*</span></label>
+              <input type="date" id="startDate" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60]" required>
+            </div>
+            <div>
+              <label for="endDate" class="block text-sm font-bold text-[#5D4E60] mb-2">Fecha de Finalizacion <span class="required-asterisk">*</span></label>
+              <input type="date" id="endDate" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60]" required>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label for="startTime" class="block text-sm font-bold text-[#5D4E60] mb-2">Hora de Inicio <span class="required-asterisk">*</span></label>
+              <input type="time" id="startTime" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60]" required>
+            </div>
+            <div>
+              <label for="duration" class="block text-sm font-bold text-[#5D4E60] mb-2">Duracion (horas) <span class="required-asterisk">*</span></label>
+              <input type="number" id="duration" min="0.5" step="0.5" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60]" required>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label for="location" class="block text-sm font-bold text-[#5D4E60] mb-2">Lugar <span class="required-asterisk">*</span></label>
+              <input type="text" id="location" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60]" required>
+            </div>
+            <div>
+              <label for="maxCapacity" class="block text-sm font-bold text-[#5D4E60] mb-2">Cupo Maximo <span class="required-asterisk">*</span></label>
+              <input type="number" id="maxCapacity" min="1" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60]" required>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+            <div>
+              <label for="price" class="block text-sm font-bold text-[#5D4E60] mb-2">Precio (MXN) <span class="required-asterisk">*</span></label>
+              <input type="number" id="price" min="0" step="0.01" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60]" required>
+            </div>
+            <div>
+              <label for="instructor" class="block text-sm font-bold text-[#5D4E60] mb-2">Instructor <span class="required-asterisk">*</span></label>
+              <input type="text" id="instructor" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60]" required>
+            </div>
+          </div>
+
+          <div class="mb-8">
+            <label for="status" class="block text-sm font-bold text-[#5D4E60] mb-2">Estado del Curso <span class="required-asterisk">*</span></label>
+            <select id="status" class="input-field w-full px-4 py-3 rounded-lg text-[#5D4E60] bg-white" required>
+              <option value="">Selecciona un estado</option>
+              <option value="ACTIVO">Activo</option>
+              <option value="PROXIMAMENTE">Proximamente</option>
+              <option value="COMPLETADO">Completado</option>
+              <option value="CANCELADO">Cancelado</option>
+            </select>
+          </div>
+
+          <div class="mb-8">
+            <label for="courseImageFile" class="block text-sm font-bold text-[#5D4E60] mb-2">Imagen del curso</label>
+            <input type="file" id="courseImageFile" name="imagen_file" accept="image/jpeg,image/png,image/webp"
+              class="block w-full text-sm text-[#5D4E60] file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-white file:font-bold file:bg-[#F8B4C4] hover:file:bg-[#E8A4B4] cursor-pointer">
+            <p class="text-xs text-[#5D4E60]/60 mt-2">JPG, PNG o WEBP. Maximo 5MB.</p>
+            <div class="mt-4 bg-white/70 rounded-xl p-3 min-h-28 flex items-center justify-center">
+              <img id="course-image-preview" src="" alt="Vista previa del curso" class="max-h-24 rounded-lg hidden">
+              <p id="course-image-placeholder" class="text-[#5D4E60]/60 text-sm">Vista previa de imagen</p>
+            </div>
+          </div>
+
+          <div class="flex gap-4 pt-6 border-t-2 border-[#D4B8E0]/30">
+            <button type="submit" id="submitBtn" class="btn-submit flex-1 text-white font-bold py-3 px-6 rounded-lg text-lg">Agregar Curso</button>
+            <button type="reset" id="cancelBtn" class="btn-cancel text-white font-bold py-3 px-6 rounded-lg text-lg">Cancelar</button>
+          </div>
+        </form>
+
+        <section class="mt-10">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-display text-3xl text-[#5D4E60] font-bold">Cursos guardados</h3>
+            <button id="refreshCoursesBtn" type="button" class="px-4 py-2 rounded-lg bg-[#D4B8E0] text-white font-semibold hover:bg-[#C4A8D0]">Actualizar</button>
+          </div>
+          <div id="coursesList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const CURSOS_API = 'cursosApi.php';
+    const form = document.getElementById('courseForm');
+    const successMessage = document.getElementById('successMessage');
+    const errorMessage = document.getElementById('errorMessage');
+    const errorText = document.getElementById('errorText');
+    const submitBtn = document.getElementById('submitBtn');
+    const imageInput = document.getElementById('courseImageFile');
+    const imagePreview = document.getElementById('course-image-preview');
+    const imagePlaceholder = document.getElementById('course-image-placeholder');
+    const coursesList = document.getElementById('coursesList');
+    const refreshCoursesBtn = document.getElementById('refreshCoursesBtn');
+    let imageObjectUrl = '';
+    let editingCourseId = null;
+    let editingImagePath = '';
+    let coursesById = {};
+
+    function goBackToMenu() {
+      if (window.history.length > 1) {
+        window.history.back();
+        return;
+      }
+      window.location.href = 'menuadmin.html';
+    }
+
+    async function validateAdminSession() {
+      try {
+        const response = await fetch('checkAdminSession.php', {
+          method: 'GET',
+          credentials: 'same-origin',
+          cache: 'no-store'
+        });
+        const data = await response.json();
+        if (!data || !data.authenticated) {
+          window.location.replace('loginAdmin.html');
+          return false;
+        }
+        return true;
+      } catch (error) {
+        window.location.replace('loginAdmin.html');
+        return false;
+      }
+    }
+
+    function showError(message) {
+      errorText.textContent = message;
+      errorMessage.classList.add('show');
+      setTimeout(() => errorMessage.classList.remove('show'), 5000);
+    }
+
+    function setFormMode(editing) {
+      if (editing) {
+        submitBtn.textContent = 'Actualizar Curso';
+      } else {
+        submitBtn.textContent = 'Agregar Curso';
+      }
+    }
+
+    function resetPreview() {
+      if (imageObjectUrl) {
+        URL.revokeObjectURL(imageObjectUrl);
+        imageObjectUrl = '';
+      }
+      imagePreview.classList.add('hidden');
+      imagePreview.src = '';
+      imagePlaceholder.classList.remove('hidden');
+    }
+
+    function resetFormState() {
+      editingCourseId = null;
+      editingImagePath = '';
+      setFormMode(false);
+      form.reset();
+      resetPreview();
+    }
+
+    function bindImagePreview() {
+      imageInput.addEventListener('change', () => {
+        const file = imageInput.files && imageInput.files[0] ? imageInput.files[0] : null;
+        if (!file) {
+          resetPreview();
+          return;
+        }
+        if (imageObjectUrl) {
+          URL.revokeObjectURL(imageObjectUrl);
+        }
+        imageObjectUrl = URL.createObjectURL(file);
+        imagePreview.src = imageObjectUrl;
+        imagePreview.onload = () => {
+          imagePreview.classList.remove('hidden');
+          imagePlaceholder.classList.add('hidden');
+        };
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text == null ? '' : String(text);
+      return div.innerHTML;
+    }
+
+    function toCurrency(value) {
+      const num = Number(value);
+      if (!Number.isFinite(num)) return '$0.00';
+      return num.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+    }
+
+    function normalizeImagePath(path) {
+      const value = String(path || '').trim();
+      if (!value) return '';
+      if (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('/')) return value;
+      return '../' + value;
+    }
+
+    function renderCourses(courses) {
+      coursesById = {};
+      courses.forEach((course) => {
+        coursesById[String(course.id)] = course;
+      });
+
+      if (!Array.isArray(courses) || courses.length === 0) {
+        coursesList.innerHTML = '<p class="text-[#5D4E60]/70">No hay cursos guardados aun.</p>';
+        return;
+      }
+
+      coursesList.innerHTML = courses.map((course) => {
+        const imagePath = normalizeImagePath(course.imagen);
+        const imageHtml = imagePath
+          ? `<img src="${escapeHtml(imagePath)}" alt="${escapeHtml(course.nombre)}" class="w-full h-40 object-cover">`
+          : '<div class="w-full h-40 bg-[#F8B4C4]/20 flex items-center justify-center text-[#5D4E60]/60">Sin imagen</div>';
+
+        return `
+          <article class="course-card shadow-sm">
+            ${imageHtml}
+            <div class="p-4 space-y-2">
+              <h4 class="font-bold text-[#5D4E60] text-lg">${escapeHtml(course.nombre || 'Sin nombre')}</h4>
+              <p class="text-sm text-[#5D4E60]/80 line-clamp-2">${escapeHtml(course.descripcion || '')}</p>
+              <p class="text-sm text-[#5D4E60]"><strong>Instructor:</strong> ${escapeHtml(course.instructor || '-')}</p>
+              <p class="text-sm text-[#5D4E60]"><strong>Precio:</strong> ${escapeHtml(toCurrency(course.precio))}</p>
+              <p class="text-sm text-[#5D4E60]"><strong>Estado:</strong> ${escapeHtml(course.estado || '-')}</p>
+              <div class="pt-2 flex gap-2">
+                <button type="button" class="edit-course-btn px-3 py-2 rounded-lg bg-[#F8B4C4] text-white text-sm font-semibold" data-id="${escapeHtml(course.id)}">Editar</button>
+                <button type="button" class="delete-course-btn px-3 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold" data-id="${escapeHtml(course.id)}">Eliminar</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function startEditCourse(id) {
+      const course = coursesById[String(id)];
+      if (!course) return;
+
+      editingCourseId = Number(course.id);
+      editingImagePath = String(course.imagen || '');
+      setFormMode(true);
+
+      document.getElementById('courseName').value = course.nombre || '';
+      document.getElementById('courseDescription').value = course.descripcion || '';
+      document.getElementById('startDate').value = course.fechaInicio || '';
+      document.getElementById('endDate').value = course.fechaFin || '';
+      document.getElementById('startTime').value = course.horaInicio || '';
+      document.getElementById('duration').value = course.duracion || '';
+      document.getElementById('location').value = course.lugar || '';
+      document.getElementById('maxCapacity').value = course.cupoMaximo || '';
+      document.getElementById('price').value = course.precio || '';
+      document.getElementById('instructor').value = course.instructor || '';
+      document.getElementById('status').value = course.estado || '';
+
+      const imagePath = normalizeImagePath(editingImagePath);
+      if (imagePath) {
+        imagePreview.src = imagePath;
+        imagePreview.classList.remove('hidden');
+        imagePlaceholder.classList.add('hidden');
+      } else {
+        resetPreview();
+      }
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function deleteCourse(id) {
+      if (!confirm('Seguro que deseas eliminar este curso?')) return;
+      try {
+        const payload = new FormData();
+        payload.append('action', 'delete');
+        payload.append('id', String(id));
+        const response = await fetch(CURSOS_API, {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: payload
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) {
+          throw new Error(result.error || 'No se pudo eliminar el curso');
+        }
+        if (editingCourseId === Number(id)) {
+          resetFormState();
+        }
+        await loadCourses();
+      } catch (error) {
+        showError(error.message || 'Error al eliminar curso.');
+      }
+    }
+
+    async function loadCourses() {
+      try {
+        coursesList.innerHTML = '<p class="text-[#5D4E60]/70">Cargando cursos...</p>';
+        const response = await fetch(CURSOS_API, {
+          method: 'GET',
+          credentials: 'same-origin',
+          cache: 'no-store'
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) {
+          throw new Error(result.error || 'No se pudieron cargar cursos');
+        }
+        renderCourses(result.data || []);
+      } catch (error) {
+        coursesList.innerHTML = `<p class="text-red-600">${escapeHtml(error.message || 'Error al cargar cursos')}</p>`;
+      }
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      successMessage.classList.remove('show');
+      errorMessage.classList.remove('show');
+
+      const startDateValue = document.getElementById('startDate').value;
+      const endDateValue = document.getElementById('endDate').value;
+      if (startDateValue && endDateValue && new Date(startDateValue) > new Date(endDateValue)) {
+        showError('La fecha de inicio no puede ser mayor a la fecha de finalizacion.');
+        return;
+      }
+
+      const payload = new FormData();
+      payload.append('action', editingCourseId ? 'update' : 'create');
+      if (editingCourseId) {
+        payload.append('id', String(editingCourseId));
+      }
+      payload.append('nombre', document.getElementById('courseName').value.trim());
+      payload.append('descripcion', document.getElementById('courseDescription').value.trim());
+      payload.append('fechaInicio', startDateValue);
+      payload.append('fechaFin', endDateValue);
+      payload.append('horaInicio', document.getElementById('startTime').value);
+      payload.append('duracion', document.getElementById('duration').value);
+      payload.append('lugar', document.getElementById('location').value.trim());
+      payload.append('cupoMaximo', document.getElementById('maxCapacity').value);
+      payload.append('precio', document.getElementById('price').value);
+      payload.append('instructor', document.getElementById('instructor').value.trim());
+      payload.append('estado', document.getElementById('status').value.trim());
+      if (editingImagePath) {
+        payload.append('imagen', editingImagePath);
+      }
+
+      if (imageInput.files && imageInput.files[0]) {
+        payload.append('imagen_file', imageInput.files[0]);
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Guardando...';
+      try {
+        const response = await fetch(CURSOS_API, {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: payload
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) {
+          throw new Error(result.error || 'No se pudo guardar el curso.');
+        }
+
+        resetFormState();
+        successMessage.classList.add('show');
+        await loadCourses();
+        setTimeout(() => successMessage.classList.remove('show'), 3000);
+      } catch (error) {
+        showError(error.message || 'Error al guardar el curso.');
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Agregar Curso';
+      }
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', () => {
+      resetFormState();
+      successMessage.classList.remove('show');
+      errorMessage.classList.remove('show');
+    });
+
+    refreshCoursesBtn.addEventListener('click', loadCourses);
+    coursesList.addEventListener('click', (event) => {
+      const editBtn = event.target.closest('.edit-course-btn');
+      if (editBtn) {
+        startEditCourse(editBtn.getAttribute('data-id'));
+        return;
+      }
+      const deleteBtn = event.target.closest('.delete-course-btn');
+      if (deleteBtn) {
+        deleteCourse(deleteBtn.getAttribute('data-id'));
+      }
+    });
+
+    window.addEventListener('load', async () => {
+      const ok = await validateAdminSession();
+      if (!ok) return;
+      bindImagePreview();
+      await loadCourses();
+    });
+  </script>
+</body>
+</html>

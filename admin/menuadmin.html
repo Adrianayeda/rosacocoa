@@ -1,0 +1,467 @@
+﻿<!doctype html>
+<html lang="es" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <title>Rosa Cocoa â€“ Panel de Control</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&amp;family=Poppins:wght@300;400;500;600;700&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    html,
+    body {
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .font-display {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .menu-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .welcome-header {
+      background: linear-gradient(135deg, #F8B4C4 0%, #D4B8E0 100%);
+      padding: 2rem;
+      color: white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .menu-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      border: 2px solid transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+      aspect-ratio: 1 / 1;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      border-color: #F8B4C4;
+    }
+
+    .menu-card.primary {
+      background: linear-gradient(135deg, #F8B4C4 0%, #E8A4B4 100%);
+      color: white;
+    }
+
+    .menu-card.secondary {
+      background: linear-gradient(135deg, #D4B8E0 0%, #C4A8D0 100%);
+      color: white;
+    }
+
+    .menu-card.tertiary {
+      background: linear-gradient(135deg, #A8DCD9 0%, #98CCC9 100%);
+      color: white;
+    }
+
+    .menu-card.quaternary {
+      background: linear-gradient(135deg, #FFD4A3 0%, #F5C493 100%);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .menu-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .menu-description {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .logout-btn {
+      background: #F8B4C4;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-left: auto;
+    }
+
+    .logout-btn:hover {
+      background: #E8A4B4;
+      transform: scale(1.05);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      border: 2px solid white;
+    }
+
+    .user-greeting h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .user-greeting p {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.95;
+    }
+
+    @media (max-width: 768px) {
+      .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .menu-card {
+        min-height: 150px;
+        padding: 1rem;
+      }
+
+      .menu-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .welcome-header {
+        padding: 1.5rem 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .logout-btn {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+  </style>
+  <style>
+    @view-transition {
+      navigation: auto;
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full bg-[#FFF8F0]">
+  <div class="menu-container w-full">
+    <!-- Welcome Header -->
+    <div class="welcome-header">
+      <div class="header-content">
+        <div class="user-info">
+          <div class="user-avatar">
+            <img src="imgAdmins/rosa.svg" alt="Rosa Cocoa Studio Creativo"
+              class="mx-auto w-[43px] h-[43px] md:w-[67px] md:h-[67px] object-contain" />
+          </div>
+          <div class="user-greeting">
+            <h1>Â¡Bienvenido!</h1>
+            <p id="user-email">usuario@example.com</p>
+          </div>
+        </div><button class="logout-btn" onclick="logout()">Cerrar sesiÃ³n</button>
+      </div>
+    </div>
+    <!-- Menu Grid -->
+    <div class="menu-grid"><!-- Tienda -->
+      <div class="menu-card primary" data-section="tienda" onclick="navigateTo('tienda')">
+        <div class="menu-icon">
+          <img src="imgAdmins/carritosg.svg" alt="Rosa Cocoa Studio Creativo"
+              class="mx-auto w-[43px] h-[43px] md:w-[67px] md:h-[67px] object-contain" />
+        </div>
+        <div class="menu-title">
+          Tienda
+        </div>
+        <div class="menu-description">
+          Ver productos y catálogo
+        </div>
+      </div><!-- Cursos -->
+      <div class="menu-card secondary" data-section="cursos" onclick="navigateTo('cursos')">
+        <div class="menu-icon">
+          <img src="imgAdmins/mandil.svg" alt="Rosa Cocoa Studio Creativo"
+              class="mx-auto w-[43px] h-[43px] md:w-[67px] md:h-[67px] object-contain" />
+        </div>
+        <div class="menu-title">
+          Cursos
+        </div>
+        <div class="menu-description">
+          Mis cursos inscritos
+        </div>
+      </div>
+      <!-- Pedidos -->
+      <div class="menu-card tertiary" data-section="pedidos" onclick="navigateTo('pedidos')">
+        <div class="menu-icon">
+          😶‍🌫️
+        </div>
+        <div class="menu-title">
+          Pedidos
+        </div>
+        <div class="menu-description">
+          Mis pedidos y facturas
+        </div>
+      </div><!-- Perfil -->
+      <div class="menu-card quaternary" data-section="perfil" onclick="navigateTo('perfil')">
+        <div class="menu-icon">
+          <img src="imgAdmins/chef.svg" alt="Rosa Cocoa Studio Creativo"
+              class="mx-auto w-[43px] h-[43px] md:w-[67px] md:h-[67px] object-contain" />
+        </div>
+        <div class="menu-title">
+          Perfil
+        </div>
+        <div class="menu-description">
+          Mis datos personales
+        </div>
+      </div><!-- Reportes -->
+      <div class="menu-card primary" data-section="reportes" onclick="navigateTo('reportes')">
+        <div class="menu-icon">
+          <img src="imgAdmins/nota.svg" alt="Rosa Cocoa Studio Creativo"
+              class="mx-auto w-[43px] h-[43px] md:w-[67px] md:h-[67px] object-contain" />
+        </div>
+        <div class="menu-title">
+          Reportes
+        </div>
+        <div class="menu-description">
+          Historial y estadÃ­sticas
+        </div>
+      </div><!-- Soporte -->
+      <div class="menu-card secondary" data-section="soporte" onclick="navigateTo('soporte')">
+        <div class="menu-icon">
+          ðŸ’¬
+        </div>
+        <div class="menu-title">
+          Soporte
+        </div>
+        <div class="menu-description">
+          ContÃ¡ctanos por WhatsApp
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    let inactivityTimer = null;
+    let inactivityLimitMs = 5 * 60 * 1000;
+    let serverEmail = null;
+    let serverRole = 'ADMIN';
+
+    async function validateAdminSession() {
+      try {
+        const response = await fetch('checkAdminSession.php', {
+          method: 'GET',
+          credentials: 'same-origin',
+          cache: 'no-store'
+        });
+        const data = await response.json();
+        if (!data || !data.authenticated) {
+          window.location.replace('loginAdmin.html');
+          return false;
+        }
+        serverEmail = data.email || null;
+        serverRole = (data.role || 'ADMIN').toUpperCase();
+        if (data.timeoutSeconds && Number.isFinite(Number(data.timeoutSeconds))) {
+          inactivityLimitMs = Number(data.timeoutSeconds) * 1000;
+        }
+        const emailDisplay = document.getElementById('user-email');
+        if (emailDisplay && data.email) {
+          emailDisplay.textContent = data.email;
+        }
+        return true;
+      } catch (error) {
+        window.location.replace('loginAdmin.html');
+        return false;
+      }
+    }
+
+    function fixBrokenTexts() {
+      document.title = 'Rosa Cocoa - Panel de Control';
+      const welcomeTitle = document.querySelector('.user-greeting h1');
+      if (welcomeTitle) welcomeTitle.textContent = '¡Bienvenido!';
+
+      const logoutButton = document.querySelector('.logout-btn');
+      if (logoutButton) logoutButton.textContent = 'Cerrar sesión';
+
+      const descriptions = document.querySelectorAll('.menu-description');
+      if (descriptions.length >= 6) {
+        descriptions[0].textContent = 'Ver productos y catálogo';
+        descriptions[4].textContent = 'Historial y estadísticas';
+        descriptions[5].textContent = 'Contáctanos por WhatsApp';
+      }
+    }
+
+    function startInactivityTimer() {
+      const reset = () => {
+        if (inactivityTimer) clearTimeout(inactivityTimer);
+        inactivityTimer = setTimeout(() => {
+          logout();
+        }, inactivityLimitMs);
+      };
+
+      ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach((eventName) => {
+        window.addEventListener(eventName, reset, { passive: true });
+      });
+      reset();
+    }
+
+    function applyRolePermissions() {
+      const allowedByRole = {
+        ADMIN: ['tienda', 'cursos', 'pedidos', 'perfil', 'reportes', 'soporte'],
+        CHEF: ['tienda', 'cursos', 'pedidos' , 'perfil', 'reportes','soporte' ]
+      };
+      const allowed = allowedByRole[serverRole] || allowedByRole.ADMIN;
+
+      document.querySelectorAll('.menu-card[data-section]').forEach((card) => {
+        const section = card.dataset.section;
+        if (!allowed.includes(section)) {
+          card.style.display = 'none';
+        } else {
+          card.style.display = 'flex';
+        }
+      });
+
+      if (serverRole === 'CHEF') {
+        const tiendaCard = document.querySelector('.menu-card[data-section="tienda"]');
+        const cursosCard = document.querySelector('.menu-card[data-section="cursos"]');
+        if (tiendaCard) {
+          const title = tiendaCard.querySelector('.menu-title');
+          const desc = tiendaCard.querySelector('.menu-description');
+          if (title) title.textContent = 'Productos';
+          if (desc) desc.textContent = 'Agregar productos';
+        }
+        if (cursosCard) {
+          const title = cursosCard.querySelector('.menu-title');
+          const desc = cursosCard.querySelector('.menu-description');
+          if (title) title.textContent = 'Cursos';
+          if (desc) desc.textContent = 'Agregar cursos';
+        }
+      }
+    }
+
+    // Get user email from localStorage or session
+    function initializeDashboard() {
+      const userEmail = serverEmail || 'usuario@example.com';
+      const emailDisplay = document.getElementById('user-email');
+      if (emailDisplay) {
+        emailDisplay.textContent = userEmail;
+      }
+    }
+
+    function navigateTo(section) {
+      sessionStorage.setItem('currentSection', section);
+      const routesByRole = {
+        ADMIN: {
+          tienda: 'tienda.html',
+          cursos: 'cursos.html',
+          pedidos: 'pedidos.html',
+          perfil: 'perfil.html',
+          reportes: 'reportes.html',
+          soporte: 'soporte.html'
+        },
+        CHEF: {
+          tienda: 'tienda.html',
+          cursos: 'cursos.html',
+          perfil: 'perfil.html',
+          reportes: 'reportes.html',
+          soporte: 'soporte.html'
+        }
+      };
+
+      const routes = routesByRole[serverRole] || routesByRole.ADMIN;
+      const target = routes[section];
+      if (target) {
+        window.location.href = target;
+      } else {
+        alert('No tienes permisos para esta sección');
+      }
+    }
+
+    function logout() {
+      // Clear stored data
+      localStorage.removeItem('userEmail');
+      sessionStorage.clear();
+
+      // Redirect to login page
+      window.location.href = 'logoutAdmin.php';
+    }
+
+    // Initialize on page load
+    async function guardAdminAccess() {
+      fixBrokenTexts();
+      const ok = await validateAdminSession();
+      if (ok) {
+        applyRolePermissions();
+        initializeDashboard();
+        startInactivityTimer();
+      }
+    }
+
+    window.addEventListener('load', guardAdminAccess);
+
+    // Re-validate when coming back with browser back/forward cache
+    window.addEventListener('pageshow', () => {
+      guardAdminAccess();
+    });
+  </script>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9d339063551bac44',t:'MTc3MTk4NDM1NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

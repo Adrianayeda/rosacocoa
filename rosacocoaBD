@@ -1,0 +1,185 @@
+-- Como entrar a la BD
+$conexion = new mysqli("localhost", "root", "", "rosacocoa");
+
+-- ==============================
+-- TABLA USUARIO
+-- ==============================
+
+CREATE TABLE usuario (
+    usu_id INT AUTO_INCREMENT PRIMARY KEY,
+    usu_nombre VARCHAR(150) NOT NULL,
+    usu_correo VARCHAR(100) NOT NULL UNIQUE,
+    usu_password VARCHAR(255) NOT NULL,
+    usu_telefono VARCHAR(20),
+    usu_rol VARCHAR(20) NOT NULL,
+    usu_fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    usu_estatus TINYINT NOT NULL DEFAULT 1 CHECK (usu_estatus IN (0,1)),
+    
+    CONSTRAINT chk_rol 
+        CHECK (usu_rol IN ('ADMIN','CLIENTE'))
+);
+
+-- Índices usuario
+CREATE INDEX idx_usuario_nombre ON usuario(usu_nombre);
+CREATE INDEX idx_usuario_rol ON usuario(usu_rol);
+
+-- ==============================
+-- TABLA TIPO PRODUCTO
+-- ==============================
+
+CREATE TABLE tipo_producto (
+    tip_id INT AUTO_INCREMENT PRIMARY KEY,
+    tip_nombre VARCHAR(100) NOT NULL UNIQUE,
+    tip_descripcion VARCHAR(200)
+);
+
+-- ==============================
+-- TABLA PROVEEDOR
+-- ==============================
+
+CREATE TABLE proveedor (
+    prov_id INT AUTO_INCREMENT PRIMARY KEY,
+    prov_nombre VARCHAR(150) NOT NULL,
+    prov_empresa VARCHAR(150),
+    prov_telefono VARCHAR(20),
+    prov_correo VARCHAR(100) UNIQUE,
+    prov_direccion VARCHAR(200),
+    prov_estatus TINYINT NOT NULL DEFAULT 1 CHECK (prov_estatus IN (0,1))
+);
+
+CREATE INDEX idx_proveedor_nombre ON proveedor(prov_nombre);
+
+-- ==============================
+-- TABLA PRODUCTO
+-- ==============================
+
+CREATE TABLE producto (
+    prod_id INT AUTO_INCREMENT PRIMARY KEY,
+    prod_nombre VARCHAR(150) NOT NULL,
+    prod_descripcion TEXT,
+    prod_precio DECIMAL(10,2) NOT NULL CHECK (prod_precio > 0),
+    prod_stock INT NOT NULL CHECK (prod_stock >= 0),
+    tip_id INT NOT NULL,
+    prov_id INT NOT NULL,
+    prod_fecha_registro DATETIME DEFAULT CURRENT_TIMESTAMP,
+    prod_estatus TINYINT NOT NULL DEFAULT 1 CHECK (prod_estatus IN (0,1)),
+    
+    FOREIGN KEY (tip_id) REFERENCES tipo_producto(tip_id)
+        ON UPDATE CASCADE,
+        
+    FOREIGN KEY (prov_id) REFERENCES proveedor(prov_id)
+        ON UPDATE CASCADE
+);
+
+-- Índices producto
+CREATE INDEX idx_producto_nombre ON producto(prod_nombre);
+CREATE INDEX idx_producto_tipo ON producto(tip_id);
+CREATE INDEX idx_producto_proveedor ON producto(prov_id);
+
+-- ==============================
+-- TABLA CURSO
+-- ==============================
+
+CREATE TABLE curso (
+    cur_id INT AUTO_INCREMENT PRIMARY KEY,
+    cur_nombre VARCHAR(150) NOT NULL,
+    cur_descripcion TEXT,
+    cur_fecha DATE NOT NULL,
+    cur_hora TIME NOT NULL,
+    cur_lugar VARCHAR(200) NOT NULL,
+    cur_cupo_maximo INT NOT NULL CHECK (cur_cupo_maximo > 0),
+    cur_precio DECIMAL(10,2) NOT NULL CHECK (cur_precio >= 0),
+    cur_estatus TINYINT NOT NULL DEFAULT 1 CHECK (cur_estatus IN (0,1))
+);
+
+-- Índices curso
+CREATE INDEX idx_curso_fecha ON curso(cur_fecha);
+CREATE INDEX idx_curso_nombre ON curso(cur_nombre);
+
+-- ==============================
+-- TABLA INSCRIPCION CURSO
+-- ==============================
+
+CREATE TABLE inscripcion_curso (
+    ins_id INT AUTO_INCREMENT PRIMARY KEY,
+    usu_id INT NOT NULL,
+    cur_id INT NOT NULL,
+    ins_fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    ins_estado_pago VARCHAR(20) NOT NULL DEFAULT 'PENDIENTE',
+    
+    UNIQUE (usu_id, cur_id),
+    
+    FOREIGN KEY (usu_id) REFERENCES usuario(usu_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+        
+    FOREIGN KEY (cur_id) REFERENCES curso(cur_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE,
+        
+    CHECK (ins_estado_pago IN ('PENDIENTE','PAGADO'))
+);
+
+-- Índices inscripción
+CREATE INDEX idx_inscripcion_usuario ON inscripcion_curso(usu_id);
+CREATE INDEX idx_inscripcion_curso ON inscripcion_curso(cur_id);
+
+-- ==============================
+-- TABLA INSCRIPCION REPORTE
+-- ==============================
+CREATE TABLE reporte_problema (
+    rep_id INT AUTO_INCREMENT PRIMARY KEY,
+    usu_id INT,
+    rep_titulo VARCHAR(150) NOT NULL,
+    rep_descripcion TEXT NOT NULL,
+    rep_tipo VARCHAR(30) NOT NULL,
+    rep_estado VARCHAR(20) NOT NULL DEFAULT 'ABIERTO',
+    rep_fecha DATETIME DEFAULT CURRENT_TIMESTAMP,
+    rep_prioridad VARCHAR(20) DEFAULT 'MEDIA',
+    
+    FOREIGN KEY (usu_id) REFERENCES usuario(usu_id)
+        ON DELETE SET NULL
+        ON UPDATE CASCADE,
+        
+    CHECK (rep_tipo IN ('CURSO','PRODUCTO','SISTEMA','OTRO')),
+    CHECK (rep_estado IN ('ABIERTO','EN_PROCESO','CERRADO')),
+    CHECK (rep_prioridad IN ('BAJA','MEDIA','ALTA'))
+);
+
+CREATE INDEX idx_reporte_usuario ON reporte_problema(usu_id);
+CREATE INDEX idx_reporte_estado ON reporte_problema(rep_estado);
+CREATE INDEX idx_reporte_fecha ON reporte_problema(rep_fecha);
+
+-- ==============================
+-- TABLA IMAGEN PRODUCTO
+-- ==============================
+
+CREATE TABLE imagen_producto (
+    img_prod_id INT AUTO_INCREMENT PRIMARY KEY,
+    prod_id INT NOT NULL,
+    img_url VARCHAR(255) NOT NULL,
+    img_principal TINYINT NOT NULL DEFAULT 0 CHECK (img_principal IN (0,1)),
+    
+    FOREIGN KEY (prod_id) REFERENCES producto(prod_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE INDEX idx_imagen_producto_prod ON imagen_producto(prod_id);
+
+-- ==============================
+-- TABLA IMAGEN CURSO
+-- ==============================
+
+CREATE TABLE imagen_curso (
+    img_cur_id INT AUTO_INCREMENT PRIMARY KEY,
+    cur_id INT NOT NULL,
+    img_url VARCHAR(255) NOT NULL,
+    img_principal TINYINT NOT NULL DEFAULT 0 CHECK (img_principal IN (0,1)),
+    
+    FOREIGN KEY (cur_id) REFERENCES curso(cur_id)
+        ON DELETE CASCADE
+        ON UPDATE CASCADE
+);
+
+CREATE INDEX idx_imagen_curso_cur ON imagen_curso(cur_id);

@@ -1,0 +1,549 @@
+﻿<!doctype html>
+<html lang="es" class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rosa Cocoa â€“ Panel de Control</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&amp;family=Poppins:wght@300;400;500;600;700&amp;display=swap"
+    rel="stylesheet">
+  <style>
+    html,
+    body {
+      height: 100%;
+      box-sizing: border-box;
+    }
+
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .font-display {
+      font-family: 'Cormorant Garamond', serif;
+    }
+
+    .menu-container {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .welcome-header {
+      background: linear-gradient(135deg, #F8B4C4 0%, #D4B8E0 100%);
+      padding: 2rem;
+      color: white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    .menu-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      padding: 2rem;
+      overflow-y: auto;
+    }
+
+    .menu-card {
+      background: white;
+      border-radius: 1.5rem;
+      padding: 1.5rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      border: 2px solid transparent;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 180px;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+      border-color: #F8B4C4;
+    }
+
+    .menu-card.primary {
+      background: linear-gradient(135deg, #F8B4C4 0%, #E8A4B4 100%);
+      color: white;
+    }
+
+    .menu-card.secondary {
+      background: linear-gradient(135deg, #D4B8E0 0%, #C4A8D0 100%);
+      color: white;
+    }
+
+    .menu-card.tertiary {
+      background: linear-gradient(135deg, #A8DCD9 0%, #98CCC9 100%);
+      color: white;
+    }
+
+    .menu-card.quaternary {
+      background: linear-gradient(135deg, #FFD4A3 0%, #F5C493 100%);
+      color: white;
+    }
+
+    .menu-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    .menu-title {
+      font-weight: 600;
+      font-size: 1.1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .menu-description {
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+
+    .logout-btn {
+      background: #F8B4C4;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      margin-left: auto;
+    }
+
+    .logout-btn:hover {
+      background: #E8A4B4;
+      transform: scale(1.05);
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+
+    .user-info {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .user-avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      border: 2px solid white;
+    }
+
+    .user-greeting h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+
+    .user-greeting p {
+      margin: 0;
+      font-size: 0.9rem;
+      opacity: 0.95;
+    }
+
+    @media (max-width: 768px) {
+      .menu-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .menu-card {
+        min-height: 150px;
+        padding: 1rem;
+      }
+
+      .menu-icon {
+        font-size: 2.5rem;
+        margin-bottom: 0.5rem;
+      }
+
+      .welcome-header {
+        padding: 1.5rem 1rem;
+      }
+
+      .header-content {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .logout-btn {
+        width: 100%;
+        margin-left: 0;
+      }
+    }
+  </style>
+  <style>
+    @view-transition {
+      navigation: auto;
+    }
+  </style>
+  <script src="https://cdn.tailwindcss.com/3.4.17" type="text/javascript"></script>
+  <script src="/_sdk/data_sdk.js" type="text/javascript"></script>
+</head>
+
+<body class="h-full bg-[#FFF8F0]">
+  <div class="menu-container w-full">
+    <div id="appContainer"></div><!-- Menu Grid -->
+    <script>
+      const REPORTES_API = 'reportesApi.php';
+      let allBugs = [];
+      let currentRole = 'ADMIN';
+
+      async function validateAdminSession() {
+        try {
+          const response = await fetch('checkAdminSession.php', {
+            method: 'GET',
+            credentials: 'same-origin',
+            cache: 'no-store'
+          });
+          const data = await response.json();
+          if (!data || !data.authenticated) {
+            window.location.replace('loginAdmin.html');
+            return null;
+          }
+          currentRole = String(data.role || 'ADMIN').toUpperCase();
+          return data;
+        } catch (e) {
+          window.location.replace('loginAdmin.html');
+          return null;
+        }
+      }
+
+      async function initializeApp() {
+        const session = await validateAdminSession();
+        if (!session) return;
+        showBugReportView();
+        await loadReports();
+      }
+
+      function showBugReportView() {
+        const container = document.querySelector('.menu-container');
+        container.innerHTML = `
+        <div class="bug-report-page">
+          <div class="welcome-header">
+            <div class="header-content">
+              <div class="user-info">
+                <button onclick="window.history.back()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F8B4C4] hover:bg-[#E8A4B4] text-white font-medium transition-all hover:scale-105">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg></button>
+                <div class="user-avatar">
+                  <img src="imgAdmins/rosa.svg" alt="Rosa Cocoa Studio Creativo"
+              class="mx-auto w-[43px] h-[43px] md:w-[67px] md:h-[67px] object-contain" /></div>
+                <div class="user-greeting">
+                  <h1>Reportar Bugs</h1>
+                  <p>Ayúdanos a mejorar Rosa Cocoa</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bug-report-content">
+            <div class="bug-form-section">
+              <h2 class="form-title">Crear nuevo reporte</h2>
+
+              <form id="bugForm" onsubmit="submitBugReport(event)">
+                <div class="form-group">
+                  <label for="bugTitle">Título del bug *</label>
+                  <input type="text" id="bugTitle" placeholder="Describe brevemente el problema" required>
+                </div>
+
+                <div class="form-group">
+                  <label for="bugDescription">Descripción *</label>
+                  <textarea id="bugDescription" placeholder="Proporciona detalles del bug: ¿qué pasó? ¿Cómo reproducirlo?" required rows="5"></textarea>
+                </div>
+
+                <div class="form-row">
+                  <div class="form-group">
+                    <label for="bugCategory">Categoría *</label>
+                    <select id="bugCategory" required>
+                      <option value="">Selecciona una categoría</option>
+                      <option value="tienda">Tienda</option>
+                      <option value="cursos">Cursos</option>
+                      <option value="pedidos">Pedidos</option>
+                      <option value="perfil">Perfil</option>
+                      <option value="interfaz">Interfaz</option>
+                      <option value="otro">Otro</option>
+                    </select>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="bugSeverity">Severidad *</label>
+                    <select id="bugSeverity" required>
+                      <option value="">Selecciona severidad</option>
+                      <option value="baja">Baja</option>
+                      <option value="media">Media</option>
+                      <option value="alta">Alta</option>
+                      <option value="critica">Crítica</option>
+                    </select>
+                  </div>
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn">
+                  <span id="submitText">Enviar Reporte</span>
+                  <span id="loadingSpinner" style="display:none;">⏳ Enviando...</span>
+                </button>
+              </form>
+
+              <div id="successMessage" class="success-message" style="display:none;">
+                ✅ ¡Reporte enviado exitosamente! Gracias por ayudarnos a mejorar.
+              </div>
+            </div>
+
+            <div class="bugs-list-section">
+              <h2 class="form-title">Mis reportes</h2>
+              <div id="bugsList" class="bugs-list">
+                <p class="empty-state">No hay reportes aún. ¡Sé el primero en reportar un bug!</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+        if (!document.getElementById('bugReportStyles')) {
+          const style = document.createElement('style');
+          style.id = 'bugReportStyles';
+          style.textContent = `
+          .bug-report-page { height: 100%; display: flex; flex-direction: column; background: #FFF8F0; }
+          .bug-report-content { flex: 1; overflow-y: auto; padding: 2rem; display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; }
+          .bug-form-section, .bugs-list-section { background: white; border-radius: 1.5rem; padding: 2rem; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08); }
+          .form-title { font-size: 1.3rem; font-weight: 600; color: #2d2d2d; margin-bottom: 1.5rem; font-family: 'Cormorant Garamond', serif; }
+          .form-group { margin-bottom: 1.5rem; }
+          .form-group label { display: block; margin-bottom: 0.5rem; font-weight: 500; color: #4a4a4a; font-size: 0.95rem; }
+          .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 0.75rem; border: 2px solid #e0e0e0; border-radius: 0.75rem; font-family: 'Poppins', sans-serif; font-size: 0.95rem; transition: border-color 0.3s ease; }
+          .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #F8B4C4; }
+          .form-group textarea { resize: vertical; }
+          .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+          .submit-btn { width: 100%; padding: 1rem; background: linear-gradient(135deg, #F8B4C4 0%, #E8A4B4 100%); color: white; border: none; border-radius: 0.75rem; font-weight: 600; cursor: pointer; font-size: 1rem; transition: all 0.3s ease; }
+          .submit-btn:hover { transform: scale(1.02); box-shadow: 0 8px 20px rgba(248, 180, 196, 0.3); }
+          .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+          .success-message { background: #d4edda; color: #155724; padding: 1rem; border-radius: 0.75rem; margin-top: 1rem; text-align: center; font-weight: 500; }
+          .bugs-list { display: flex; flex-direction: column; gap: 1rem; max-height: 600px; overflow-y: auto; }
+          .bug-item { background: #f9f9f9; border-left: 4px solid #F8B4C4; padding: 1rem; border-radius: 0.75rem; transition: all 0.3s ease; }
+          .bug-item:hover { background: #f0f0f0; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); }
+          .bug-item-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.5rem; }
+          .bug-item-title { font-weight: 600; color: #2d2d2d; flex: 1; }
+          .bug-item-badge { display: inline-block; padding: 0.25rem 0.75rem; border-radius: 0.5rem; font-size: 0.75rem; font-weight: 600; }
+          .severity-baja { background: #d4edda; color: #155724; }
+          .severity-media { background: #fff3cd; color: #856404; }
+          .severity-alta, .severity-critica { background: #f8d7da; color: #721c24; }
+          .bug-item-meta { display: flex; gap: 1rem; font-size: 0.85rem; color: #666; margin-top: 0.5rem; flex-wrap: wrap; }
+          .bug-item-description { color: #4a4a4a; margin-top: 0.5rem; line-height: 1.4; }
+          .status-select { border: 2px solid #e0e0e0; border-radius: 0.55rem; padding: 0.25rem 0.45rem; background: #fff; }
+          .status-btn { border: 0; border-radius: 0.55rem; padding: 0.3rem 0.6rem; background: #D4B8E0; color: #fff; font-weight: 600; }
+          .delete-btn { border: 0; border-radius: 0.55rem; padding: 0.3rem 0.6rem; background: #ef4444; color: #fff; font-weight: 600; }
+          .delete-btn:disabled { background: #fca5a5; cursor: not-allowed; }
+          .empty-state { text-align: center; color: #999; padding: 2rem 0; }
+          @media (max-width: 1024px) { .bug-report-content { grid-template-columns: 1fr; } .form-row { grid-template-columns: 1fr; } }
+          @media (max-width: 768px) { .bug-report-content { padding: 1rem; } .bug-form-section, .bugs-list-section { padding: 1.5rem; } }
+        `;
+          document.head.appendChild(style);
+        }
+
+        renderBugsList();
+      }
+
+      function normalizeStatus(value) {
+        const status = String(value || '').toUpperCase();
+        if (status === 'ABIERTO' || status === 'EN_PROCESO' || status === 'CERRADO') return status;
+        return 'ABIERTO';
+      }
+
+      function isResolved(value) {
+        return normalizeStatus(value) === 'CERRADO';
+      }
+
+      async function loadReports() {
+        const bugsList = document.getElementById('bugsList');
+        try {
+          const response = await fetch(REPORTES_API, {
+            method: 'GET',
+            credentials: 'same-origin',
+            cache: 'no-store'
+          });
+          const payload = await response.json();
+          if (!response.ok || !payload.ok) throw new Error(payload.error || 'No se pudo cargar');
+          allBugs = payload.data || [];
+          renderBugsList();
+        } catch (e) {
+          if (bugsList) bugsList.innerHTML = '<p class="empty-state">No se pudieron cargar los reportes.</p>';
+        }
+      }
+
+      function renderBugsList() {
+        const bugsList = document.getElementById('bugsList');
+        if (!bugsList) return;
+
+        if (allBugs.length === 0) {
+          bugsList.innerHTML = '<p class="empty-state">No hay reportes aún. ¡Sé el primero en reportar un bug!</p>';
+          return;
+        }
+
+        bugsList.innerHTML = allBugs.map((bug) => {
+          const severity = String(bug.severity || 'media').toLowerCase();
+          const status = normalizeStatus(bug.status);
+          const canDelete = currentRole === 'ADMIN' || !isResolved(status);
+          const statusControls = currentRole === 'ADMIN'
+            ? `<label for="status-${bug.id}">Estado:</label>
+             <select id="status-${bug.id}" class="status-select">
+               <option value="ABIERTO" ${status === 'ABIERTO' ? 'selected' : ''}>ABIERTO</option>
+               <option value="EN_PROCESO" ${status === 'EN_PROCESO' ? 'selected' : ''}>EN PROCESO</option>
+               <option value="CERRADO" ${status === 'CERRADO' ? 'selected' : ''}>CERRADO</option>
+             </select>
+             <button type="button" class="status-btn" onclick="updateReportStatus(${bug.id})">Guardar estado</button>`
+            : '';
+
+          return `
+          <div class="bug-item">
+            <div class="bug-item-header">
+              <span class="bug-item-title">${escapeHtml(bug.title)}</span>
+              <span class="bug-item-badge severity-${severity}">${escapeHtml(severity.toUpperCase())}</span>
+            </div>
+            <div class="bug-item-description">${escapeHtml(bug.description)}</div>
+            <div class="bug-item-meta">
+              <span>📂 ${escapeHtml(String(bug.category || '').toUpperCase())}</span>
+              <span>👤 ${escapeHtml(bug.userEmail || 'Sin usuario')}</span>
+              <span>📅 ${formatDate(bug.createdAt)}</span>
+              <span>🏷️ ${escapeHtml(status)}</span>
+              <span class="${isResolved(status) ? 'text-green-700 font-semibold' : 'text-red-700 font-semibold'}">${isResolved(status) ? 'Resuelto' : 'No resuelto'}</span>
+            </div>
+            <div class="bug-item-meta">
+              ${statusControls}
+              <button type="button" class="delete-btn" onclick="deleteReport(${bug.id})" ${canDelete ? '' : 'disabled'}>Borrar</button>
+            </div>
+          </div>
+        `;
+        }).join('');
+      }
+
+      async function submitBugReport(event) {
+        event.preventDefault();
+
+        const title = document.getElementById('bugTitle').value.trim();
+        const description = document.getElementById('bugDescription').value.trim();
+        const category = document.getElementById('bugCategory').value;
+        const severity = document.getElementById('bugSeverity').value;
+
+        const submitBtn = document.getElementById('submitBtn');
+        const submitText = document.getElementById('submitText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const successMessage = document.getElementById('successMessage');
+
+        submitBtn.disabled = true;
+        submitText.style.display = 'none';
+        loadingSpinner.style.display = 'inline';
+
+        try {
+          const response = await fetch(REPORTES_API, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ title, description, category, severity })
+          });
+          const payload = await response.json();
+          if (!response.ok || !payload.ok) throw new Error(payload.error || 'No se pudo guardar');
+
+          document.getElementById('bugForm').reset();
+          successMessage.style.display = 'block';
+          setTimeout(() => { successMessage.style.display = 'none'; }, 2500);
+          await loadReports();
+        } catch (e) {
+          alert(e.message || 'Error al guardar el reporte');
+        } finally {
+          submitBtn.disabled = false;
+          submitText.style.display = 'inline';
+          loadingSpinner.style.display = 'none';
+        }
+      }
+
+      async function updateReportStatus(id) {
+        if (currentRole !== 'ADMIN') return;
+        const select = document.getElementById('status-' + id);
+        if (!select) return;
+        const status = select.value;
+        try {
+          const response = await fetch(REPORTES_API, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'update_status', id, status })
+          });
+          const payload = await response.json();
+          if (!response.ok || !payload.ok) throw new Error(payload.error || 'No se pudo actualizar estado');
+          await loadReports();
+        } catch (e) {
+          alert(e.message || 'Error al actualizar estado');
+        }
+      }
+
+      async function deleteReport(id) {
+        if (!confirm('Seguro que deseas borrar este reporte?')) return;
+        try {
+          const response = await fetch(REPORTES_API, {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'delete', id })
+          });
+          const payload = await response.json();
+          if (!response.ok || !payload.ok) throw new Error(payload.error || 'No se pudo borrar');
+          await loadReports();
+        } catch (e) {
+          alert(e.message || 'Error al borrar');
+        }
+      }
+
+      function goBackToMenu() {
+        if (window.history.length > 1) {
+          window.history.back();
+          return;
+        }
+        window.location.href = 'menuadmin.html';
+      }
+
+      function formatDate(isoString) {
+        const date = new Date(isoString);
+        return date.toLocaleDateString('es-MX', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      }
+
+      function escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text == null ? '' : String(text);
+        return div.innerHTML;
+      }
+
+      window.addEventListener('load', initializeApp);
+    </script>
+  </div>
+  <script>(function () { function c() { var b = a.contentDocument || a.contentWindow.document; if (b) { var d = b.createElement('script'); d.innerHTML = "window.__CF$cv$params={r:'9d468d1d8535bd6a',t:'MTc3MjE4MzQ0OS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"; b.getElementsByTagName('head')[0].appendChild(d) } } if (document.body) { var a = document.createElement('iframe'); a.height = 1; a.width = 1; a.style.position = 'absolute'; a.style.top = 0; a.style.left = 0; a.style.border = 'none'; a.style.visibility = 'hidden'; document.body.appendChild(a); if ('loading' !== document.readyState) c(); else if (window.addEventListener) document.addEventListener('DOMContentLoaded', c); else { var e = document.onreadystatechange || function () { }; document.onreadystatechange = function (b) { e(b); 'loading' !== document.readyState && (document.onreadystatechange = e, c()) } } } })();</script>
+</body>
+
+</html>

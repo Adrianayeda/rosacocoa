@@ -1,0 +1,476 @@
+<!doctype html>
+<html lang="es" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agregar Producto - Rosa Cocoa</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Poppins', sans-serif; }
+    .font-display { font-family: 'Cormorant Garamond', serif; }
+    .product-card { background: #fff; border: 1px solid #f3d9e0; border-radius: 1rem; overflow: hidden; }
+  </style>
+</head>
+<body class="h-full bg-[#FFF8F0] overflow-auto">
+  <div class="min-h-full">
+    <header class="bg-white shadow-md sticky top-0 z-40">
+      <div class="max-w-5xl mx-auto px-4 py-4 flex items-center justify-between">
+        <button onclick="goBackToMenu()" class="flex items-center gap-2 px-4 py-2 rounded-lg bg-[#F8B4C4] hover:bg-[#E8A4B4] text-white font-medium transition-all hover:scale-105">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+          </svg>
+          Volver
+        </button>
+        <h1 class="font-display text-3xl font-bold text-[#5D4E60]">Alta de Producto</h1>
+        <div class="w-24"></div>
+      </div>
+    </header>
+
+    <section class="py-10 px-4">
+      <div class="max-w-5xl mx-auto">
+        <form id="product-form" class="bg-white rounded-3xl shadow-xl p-8 md:p-10 space-y-8" enctype="multipart/form-data">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="product-name" class="block text-sm font-bold text-[#5D4E60] mb-2">Nombre *</label>
+              <input type="text" id="product-name" required class="w-full px-4 py-3 border-2 border-[#D4B8E0] rounded-lg focus:border-[#F8B4C4] focus:outline-none" placeholder="Ej: Colorante en gel">
+            </div>
+            <div>
+              <label for="product-category" class="block text-sm font-bold text-[#5D4E60] mb-2">Categoria</label>
+              <select id="product-category" class="w-full px-4 py-3 border-2 border-[#D4B8E0] rounded-lg focus:border-[#F8B4C4] focus:outline-none">
+                <option value="">Seleccionar categoria</option>
+                <option value="INSUMOS">Insumos</option>
+                <option value="HERRAMIENTAS">Herramientas</option>
+                <option value="MATERIA_PRIMA">Materia prima</option>
+                <option value="DECORACION">Decoracion</option>
+              </select>
+            </div>
+            <div>
+              <label for="product-price" class="block text-sm font-bold text-[#5D4E60] mb-2">Precio *</label>
+              <input type="number" id="product-price" required step="0.01" min="0" class="w-full px-4 py-3 border-2 border-[#D4B8E0] rounded-lg focus:border-[#F8B4C4] focus:outline-none" placeholder="0.00">
+            </div>
+            <div>
+              <label for="product-stock" class="block text-sm font-bold text-[#5D4E60] mb-2">Stock *</label>
+              <input type="number" id="product-stock" required min="0" class="w-full px-4 py-3 border-2 border-[#D4B8E0] rounded-lg focus:border-[#F8B4C4] focus:outline-none" placeholder="0">
+            </div>
+            <div>
+              <label for="product-code" class="block text-sm font-bold text-[#5D4E60] mb-2">Codigo / SKU</label>
+              <input type="text" id="product-code" class="w-full px-4 py-3 border-2 border-[#D4B8E0] rounded-lg focus:border-[#F8B4C4] focus:outline-none" placeholder="Ej: RC-COL-001">
+            </div>
+            <div>
+              <label for="product-status" class="block text-sm font-bold text-[#5D4E60] mb-2">Estado</label>
+              <select id="product-status" class="w-full px-4 py-3 border-2 border-[#D4B8E0] rounded-lg focus:border-[#F8B4C4] focus:outline-none">
+                <option value="DISPONIBLE" selected>Disponible</option>
+                <option value="AGOTADO">Agotado</option>
+                <option value="PROXIMAMENTE">Proximamente</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label for="product-description" class="block text-sm font-bold text-[#5D4E60] mb-2">Descripcion *</label>
+            <textarea id="product-description" required rows="4" class="w-full px-4 py-3 border-2 border-[#D4B8E0] rounded-lg focus:border-[#F8B4C4] focus:outline-none resize-none" placeholder="Descripcion del producto"></textarea>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label for="product-image-file" class="block text-sm font-bold text-[#5D4E60] mb-2">Imagen del producto</label>
+              <input type="file" id="product-image-file" name="imagen_file" accept="image/jpeg,image/png,image/webp" class="block w-full text-sm text-[#5D4E60] file:mr-4 file:py-3 file:px-6 file:rounded-lg file:border-0 file:text-white file:font-bold file:bg-[#F8B4C4] hover:file:bg-[#E8A4B4] cursor-pointer">
+              <p class="text-xs text-[#5D4E60]/60 mt-2">JPG, PNG o WEBP. Maximo 5MB.</p>
+            </div>
+            <div class="bg-gradient-to-br from-[#F8B4C4]/20 to-[#D4B8E0]/20 rounded-2xl p-4 flex items-center justify-center min-h-44">
+              <img id="image-preview" src="" alt="Vista previa" class="w-full h-40 object-cover rounded-xl hidden">
+              <p id="image-placeholder" class="text-[#5D4E60]/60 text-sm">Vista previa de imagen</p>
+            </div>
+          </div>
+
+          <div class="flex flex-col sm:flex-row gap-4 justify-between">
+            <button type="button" id="cancelBtn" class="px-8 py-3 rounded-lg border-2 border-[#D4B8E0] text-[#5D4E60] font-bold hover:bg-[#D4B8E0]/10 transition-all">Cancelar</button>
+            <button id="submitBtn" type="submit" class="px-8 py-3 rounded-lg bg-gradient-to-r from-[#F8B4C4] to-[#E8A4B4] text-white font-bold hover:scale-105 transition-transform shadow-lg">Guardar producto</button>
+          </div>
+        </form>
+
+        <div id="resultBox" class="hidden mt-4 rounded-lg px-4 py-3 text-sm font-medium"></div>
+
+        <section class="mt-10">
+          <div class="flex items-center justify-between gap-3 mb-3">
+            <h2 class="font-display text-3xl font-bold text-[#5D4E60]">Productos guardados</h2>
+            <button id="refreshProductsBtn" type="button" class="px-4 py-2 rounded-lg bg-[#D4B8E0] text-white font-semibold hover:bg-[#C4A8D0]">Actualizar</button>
+          </div>
+
+          <div class="bg-white rounded-2xl p-4 mb-4 shadow-sm">
+            <label for="productSearch" class="block text-sm font-bold text-[#5D4E60] mb-2">Buscar por codigo o nombre</label>
+            <input id="productSearch" type="text" class="w-full px-4 py-3 border-2 border-[#D4B8E0] rounded-lg focus:border-[#F8B4C4] focus:outline-none" placeholder="Ej: RC-COL-001 o Colorante">
+            <div id="suggestionsBox" class="mt-3 flex flex-wrap gap-2"></div>
+          </div>
+
+          <div id="productsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+        </section>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const PRODUCTOS_API = 'productosApi.php';
+    const form = document.getElementById('product-form');
+    const submitBtn = document.getElementById('submitBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const resultBox = document.getElementById('resultBox');
+    const imageInput = document.getElementById('product-image-file');
+    const imagePreview = document.getElementById('image-preview');
+    const imagePlaceholder = document.getElementById('image-placeholder');
+    const productsList = document.getElementById('productsList');
+    const refreshProductsBtn = document.getElementById('refreshProductsBtn');
+    const productSearch = document.getElementById('productSearch');
+    const suggestionsBox = document.getElementById('suggestionsBox');
+
+    let currentObjectUrl = '';
+    let editingProductId = null;
+    let editingImagePath = '';
+    let allProducts = [];
+    let productsById = {};
+
+    function goBackToMenu() {
+      if (window.history.length > 1) {
+        window.history.back();
+        return;
+      }
+      window.location.href = 'menuadmin.html';
+    }
+
+    async function validateAdminSession() {
+      try {
+        const response = await fetch('checkAdminSession.php', {
+          method: 'GET',
+          credentials: 'same-origin',
+          cache: 'no-store'
+        });
+        const data = await response.json();
+        if (!data || !data.authenticated) {
+          window.location.replace('loginAdmin.html');
+          return false;
+        }
+        return true;
+      } catch (error) {
+        window.location.replace('loginAdmin.html');
+        return false;
+      }
+    }
+
+    function showResult(message, ok) {
+      resultBox.textContent = message;
+      resultBox.className = 'mt-4 rounded-lg px-4 py-3 text-sm font-medium';
+      resultBox.classList.add(ok ? 'bg-green-100' : 'bg-red-100');
+      resultBox.classList.add(ok ? 'text-green-800' : 'text-red-800');
+    }
+
+    function setFormMode(editing) {
+      submitBtn.textContent = editing ? 'Actualizar producto' : 'Guardar producto';
+    }
+
+    function resetPreview() {
+      if (currentObjectUrl) {
+        URL.revokeObjectURL(currentObjectUrl);
+        currentObjectUrl = '';
+      }
+      imagePreview.classList.add('hidden');
+      imagePreview.src = '';
+      imagePlaceholder.classList.remove('hidden');
+    }
+
+    function resetFormState() {
+      editingProductId = null;
+      editingImagePath = '';
+      setFormMode(false);
+      form.reset();
+      resetPreview();
+    }
+
+    function bindImagePreview() {
+      imageInput.addEventListener('change', () => {
+        const file = imageInput.files && imageInput.files[0] ? imageInput.files[0] : null;
+        if (!file) {
+          resetPreview();
+          return;
+        }
+        if (currentObjectUrl) {
+          URL.revokeObjectURL(currentObjectUrl);
+        }
+        currentObjectUrl = URL.createObjectURL(file);
+        imagePreview.src = currentObjectUrl;
+        imagePreview.onload = () => {
+          imagePreview.classList.remove('hidden');
+          imagePlaceholder.classList.add('hidden');
+        };
+      });
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text == null ? '' : String(text);
+      return div.innerHTML;
+    }
+
+    function toCurrency(value) {
+      const num = Number(value);
+      if (!Number.isFinite(num)) return '$0.00';
+      return num.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+    }
+
+    function normalizeImagePath(path) {
+      const value = String(path || '').trim();
+      if (!value) return '';
+      if (value.startsWith('http://') || value.startsWith('https://') || value.startsWith('/')) return value;
+      return '../' + value;
+    }
+
+    function normalizeText(value) {
+      return String(value || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    }
+
+    function getProductLabel(product) {
+      const code = String(product.codigo || '').trim();
+      const name = String(product.nombre || '').trim();
+      if (code && name) return `${code} - ${name}`;
+      return code || name || 'Producto';
+    }
+
+    function scoreSuggestion(product, query) {
+      const q = normalizeText(query);
+      const code = normalizeText(product.codigo);
+      const name = normalizeText(product.nombre);
+      if (!q) return 1;
+      if (code === q || name === q) return 0;
+      if (code.startsWith(q) || name.startsWith(q)) return 1;
+      if (code.includes(q) || name.includes(q)) return 2;
+      const lengthGap = Math.abs((name || code).length - q.length);
+      return 3 + lengthGap;
+    }
+
+    function renderSuggestions(query, filtered) {
+      let source = filtered;
+      if (!Array.isArray(source) || source.length === 0) {
+        const ranked = [...allProducts].sort((a, b) => scoreSuggestion(a, query) - scoreSuggestion(b, query));
+        source = ranked.slice(0, 5);
+      } else {
+        source = source.slice(0, 5);
+      }
+
+      if (!source.length) {
+        suggestionsBox.innerHTML = '<span class="text-sm text-[#5D4E60]/70">Sin sugerencias todavia.</span>';
+        return;
+      }
+
+      suggestionsBox.innerHTML = source.map((p) => {
+        const label = escapeHtml(getProductLabel(p));
+        return `<button type="button" class="suggestion-btn px-3 py-1 rounded-full bg-[#F8B4C4]/20 text-[#5D4E60] text-sm" data-id="${escapeHtml(p.id)}">${label}</button>`;
+      }).join('');
+    }
+
+    function renderProducts(products, queryValue) {
+      productsById = {};
+      allProducts.forEach((p) => {
+        productsById[String(p.id)] = p;
+      });
+
+      if (!products.length) {
+        productsList.innerHTML = '<p class="text-[#5D4E60]/70">No se encontraron productos exactos. Revisa las sugerencias.</p>';
+        return;
+      }
+
+      productsList.innerHTML = products.map((product) => {
+        const imagePath = normalizeImagePath(product.imagen);
+        const imageHtml = imagePath
+          ? `<img src="${escapeHtml(imagePath)}" alt="${escapeHtml(product.nombre)}" class="w-full h-40 object-cover">`
+          : '<div class="w-full h-40 bg-[#F8B4C4]/20 flex items-center justify-center text-[#5D4E60]/60">Sin imagen</div>';
+
+        return `
+          <article class="product-card shadow-sm">
+            ${imageHtml}
+            <div class="p-4 space-y-2">
+              <h3 class="font-bold text-[#5D4E60] text-lg">${escapeHtml(product.nombre || 'Sin nombre')}</h3>
+              <p class="text-sm text-[#5D4E60]/80">${escapeHtml(product.descripcion || '')}</p>
+              <p class="text-sm text-[#5D4E60]"><strong>Codigo:</strong> ${escapeHtml(product.codigo || '-')}</p>
+              <p class="text-sm text-[#5D4E60]"><strong>Precio:</strong> ${escapeHtml(toCurrency(product.precio))}</p>
+              <p class="text-sm text-[#5D4E60]"><strong>Stock:</strong> ${escapeHtml(product.stock || '0')}</p>
+              <p class="text-sm text-[#5D4E60]"><strong>Estado:</strong> ${escapeHtml(product.estado || '-')}</p>
+              <div class="pt-2 flex gap-2">
+                <button type="button" class="edit-product-btn px-3 py-2 rounded-lg bg-[#F8B4C4] text-white text-sm font-semibold" data-id="${escapeHtml(product.id)}">Editar</button>
+                <button type="button" class="delete-product-btn px-3 py-2 rounded-lg bg-red-500 text-white text-sm font-semibold" data-id="${escapeHtml(product.id)}">Eliminar</button>
+              </div>
+            </div>
+          </article>
+        `;
+      }).join('');
+    }
+
+    function applySearch() {
+      const query = productSearch.value.trim();
+      const normalizedQuery = normalizeText(query);
+      const filtered = allProducts.filter((p) => {
+        if (!normalizedQuery) return true;
+        const code = normalizeText(p.codigo);
+        const name = normalizeText(p.nombre);
+        return code.includes(normalizedQuery) || name.includes(normalizedQuery);
+      });
+
+      renderProducts(filtered, query);
+      renderSuggestions(query, filtered);
+    }
+
+    async function loadProducts() {
+      try {
+        productsList.innerHTML = '<p class="text-[#5D4E60]/70">Cargando productos...</p>';
+        const response = await fetch(PRODUCTOS_API, {
+          method: 'GET',
+          credentials: 'same-origin',
+          cache: 'no-store'
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) {
+          throw new Error(result.error || 'No se pudieron cargar productos');
+        }
+        allProducts = Array.isArray(result.data) ? result.data : [];
+        applySearch();
+      } catch (error) {
+        productsList.innerHTML = `<p class="text-red-600">${escapeHtml(error.message || 'Error al cargar productos')}</p>`;
+      }
+    }
+
+    function startEditProduct(id) {
+      const product = productsById[String(id)];
+      if (!product) return;
+
+      editingProductId = Number(product.id);
+      editingImagePath = String(product.imagen || '');
+      setFormMode(true);
+
+      document.getElementById('product-name').value = product.nombre || '';
+      document.getElementById('product-category').value = product.categoria || '';
+      document.getElementById('product-price').value = product.precio || '';
+      document.getElementById('product-stock').value = product.stock || '';
+      document.getElementById('product-code').value = product.codigo || '';
+      document.getElementById('product-status').value = product.estado || '';
+      document.getElementById('product-description').value = product.descripcion || '';
+
+      const imagePath = normalizeImagePath(editingImagePath);
+      if (imagePath) {
+        imagePreview.src = imagePath;
+        imagePreview.classList.remove('hidden');
+        imagePlaceholder.classList.add('hidden');
+      } else {
+        resetPreview();
+      }
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    async function deleteProduct(id) {
+      if (!confirm('Seguro que deseas eliminar este producto?')) return;
+      try {
+        const payload = new FormData();
+        payload.append('action', 'delete');
+        payload.append('id', String(id));
+        const response = await fetch(PRODUCTOS_API, {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: payload
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) {
+          throw new Error(result.error || 'No se pudo eliminar el producto');
+        }
+        if (editingProductId === Number(id)) {
+          resetFormState();
+        }
+        await loadProducts();
+      } catch (error) {
+        showResult(error.message || 'Error al eliminar', false);
+      }
+    }
+
+    async function submitProduct(event) {
+      event.preventDefault();
+
+      const formData = new FormData();
+      formData.append('action', editingProductId ? 'update' : 'create');
+      if (editingProductId) {
+        formData.append('id', String(editingProductId));
+      }
+      formData.append('nombre', document.getElementById('product-name').value.trim());
+      formData.append('categoria', document.getElementById('product-category').value.trim());
+      formData.append('precio', document.getElementById('product-price').value);
+      formData.append('stock', document.getElementById('product-stock').value);
+      formData.append('codigo', document.getElementById('product-code').value.trim());
+      formData.append('estado', document.getElementById('product-status').value.trim());
+      formData.append('descripcion', document.getElementById('product-description').value.trim());
+      if (editingImagePath) {
+        formData.append('imagen', editingImagePath);
+      }
+      if (imageInput.files && imageInput.files[0]) {
+        formData.append('imagen_file', imageInput.files[0]);
+      }
+
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Guardando...';
+      try {
+        const response = await fetch(PRODUCTOS_API, {
+          method: 'POST',
+          credentials: 'same-origin',
+          body: formData
+        });
+        const result = await response.json();
+        if (!response.ok || !result.ok) {
+          throw new Error(result.error || 'No se pudo guardar el producto');
+        }
+        showResult(editingProductId ? 'Producto actualizado correctamente.' : 'Producto guardado correctamente.', true);
+        resetFormState();
+        await loadProducts();
+      } catch (error) {
+        showResult(error.message || 'Error al guardar', false);
+      } finally {
+        submitBtn.disabled = false;
+        setFormMode(Boolean(editingProductId));
+      }
+    }
+
+    cancelBtn.addEventListener('click', () => {
+      resetFormState();
+      resultBox.className = 'hidden mt-4 rounded-lg px-4 py-3 text-sm font-medium';
+    });
+
+    refreshProductsBtn.addEventListener('click', loadProducts);
+    productSearch.addEventListener('input', applySearch);
+
+    productsList.addEventListener('click', (event) => {
+      const editBtn = event.target.closest('.edit-product-btn');
+      if (editBtn) {
+        startEditProduct(editBtn.getAttribute('data-id'));
+        return;
+      }
+      const deleteBtn = event.target.closest('.delete-product-btn');
+      if (deleteBtn) {
+        deleteProduct(deleteBtn.getAttribute('data-id'));
+      }
+    });
+
+    suggestionsBox.addEventListener('click', (event) => {
+      const target = event.target.closest('.suggestion-btn');
+      if (!target) return;
+      const p = productsById[String(target.getAttribute('data-id'))];
+      if (!p) return;
+      productSearch.value = p.codigo || p.nombre || '';
+      applySearch();
+    });
+
+    window.addEventListener('load', async () => {
+      const ok = await validateAdminSession();
+      if (!ok) return;
+      bindImagePreview();
+      form.addEventListener('submit', submitProduct);
+      await loadProducts();
+    });
+  </script>
+</body>
+</html>
